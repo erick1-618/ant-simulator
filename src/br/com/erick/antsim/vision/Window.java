@@ -33,9 +33,11 @@ public class Window extends JFrame{
 		label = new JLabel();
 		label.setText("Total food: " + simController.getWorldFood() + " Food collected: " + simController.getFoodCounter());
 		
+		setTitle("Ant Simulator");
 		setLayout(new BorderLayout());
 		add(label, BorderLayout.NORTH);
 		add(panel, BorderLayout.CENTER);
+		setResizable(false);
 		setSize(new Dimension(600, 600));
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
