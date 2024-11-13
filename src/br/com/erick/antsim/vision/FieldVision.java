@@ -14,8 +14,8 @@ public class FieldVision extends JPanel {
 	private static final Color ANT_COLOR = Color.BLACK;
 	private static final Color ANT_COLONY_COLOR = Color.BLUE;
 	private static final Color FOOD_COLOR = Color.GREEN;
-	private static final Color FOOD_FOUND_COLOR = Color.RED;
-	private static final Color COLONY_RADIUS_COLOR = Color.PINK;
+	private static final Color FOOD_FOUND_COLOR = Color.pink;
+	private static final Color COLONY_RADIUS_COLOR = new Color(255, 122, 122);
 
 	public FieldVision(Field f) {
 		this.field = f;
@@ -41,10 +41,10 @@ public class FieldVision extends JPanel {
 			} else if (this.field.getObj() instanceof Food) {
 				setBackground(FOOD_COLOR);
 			}
-		} else if (this.field.getPheromone() != null && this.field.getPheromone().getLevel() > 0) {
-			setBackground(FOOD_FOUND_COLOR);
-		} else if (this.field.getArrow() != null) {
+		} else if (this.field.isColonyRadius()) {
 			setBackground(COLONY_RADIUS_COLOR);
+		} else if (this.field.getArrow() != null) {
+			setBackground(FOOD_FOUND_COLOR);
 		} else {			
 			this.setBackground(Color.WHITE);
 		}

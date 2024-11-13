@@ -1,5 +1,8 @@
 package br.com.erick.antsim.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.erick.antsim.application.SimulationController;
 import br.com.erick.antsim.utilitaries.Directions;
 
@@ -9,36 +12,19 @@ public class Field {
 	private Pheromone pheromone = null;
 	private UniverseObject obj = null;
 	private SimulationController simController;
-	private Directions arrow;
-	private boolean isColonyRaius;
-
-	public boolean isColonyRaius() {
-		return isColonyRaius;
+	
+	public Pheromone getPheromone() {
+		return this.pheromone;
 	}
-
-	public void setColonyRaius(boolean isColonyRaius) {
-		this.isColonyRaius = isColonyRaius;
-	}
-
-	public Directions getArrow() {
-		return arrow;
-	}
-
-	public void setArrow(Directions arrow) {
-		this.arrow = arrow;
+	
+	public void setPheromone(Directions d, boolean cRadius) {
+		if(this.pheromone == null) {
+			this.pheromone = new Pheromone(d, cRadius);
+		}
 	}
 
 	public SimulationController getSimController() {
 		return simController;
-	}
-
-	public Pheromone getPheromone() {
-		return pheromone;
-	}
-
-	public void addPheromone(int level) {		
-		if(this.pheromone == null) this.pheromone = new Pheromone();
-		this.pheromone.addLevel(level);
 	}
 
 	public Field(UniverseObject obj, SimulationController simulationController, int xPosition, int yPosition) {
@@ -81,6 +67,10 @@ public class Field {
 	}
 
 	public void setObj(UniverseObject obj) {
+		if(obj instanceof Ant && !this.isColonyRadius() && this.pheromone != null) {
+			Ant a = (Ant) obj;
+			pheromone.refreshLife(a);
+		}
 		this.obj = obj;
 		if(obj != null) obj.setField(this);
 	}
@@ -101,22 +91,41 @@ public class Field {
 				return "F";
 			}
 		}
-		if(pheromone != null) return "" + pheromone.getLevel();
+		if(pheromone != null) return "" + pheromone.getLife();
 		return "▢";
 	}
 
-	public void setPheromoneNull() {
-		this.pheromone = null;
-	}
-
 	public void transitate() {
-		if(pheromone != null) pheromone.decay();
-		if(obj != null) ((Alive) obj).act();
+		if(pheromone != null) {
+			if(pheromone.decay() == 0) this.pheromone = null;
+		}
+		if(obj != null && obj instanceof Alive) ((Alive) obj).act();
 	}
 
 	public void resetMovedFlag() {
 		if(this.getObj() instanceof Ant) {
 			((Ant)this.getObj()).resetMovedFlag();
 		}
+	}
+	
+	public boolean isColonyRadius() {
+		return this.getPheromone() != null ? this.getPheromone().isColonyRadius() : false;
+	}
+	
+	public Directions getArrow() {
+		return this.pheromone != null ? this.pheromone.getArrow() : null;
+	}
+	
+	public List<Field> getThisPointers() {
+		List<Field> fields = new ArrayList<Field>();
+		Field deslocated;
+		for(int i = 0; i < Directions.values().length; i++) {
+			deslocated = this.getDeslocatedField(Directions.values()[i]);
+			if(deslocated != null && deslocated.getArrow() != null &&
+					deslocated.getDeslocatedField(deslocated.getArrow()) == this) {
+				fields.add(deslocated);
+			}
+		}
+		return fields.isEmpty() ? null : fields;
 	}
 }

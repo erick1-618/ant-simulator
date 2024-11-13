@@ -1,6 +1,5 @@
 package br.com.erick.antsim.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -52,6 +51,7 @@ public class Ant extends UniverseObject implements Alive {
 
 	private Field getBestField(Modes m) {
 
+		Random r = new Random();
 		Field f = null;
 		Field deslocated = null;
 
@@ -64,24 +64,34 @@ public class Ant extends UniverseObject implements Alive {
 				if (deslocated.getObj() instanceof AntColony && this.actualMode == Modes.BACKING_COLONY) {
 					return deslocated;
 				}
-				if(this.actualMode == Modes.BACKING_COLONY && deslocated.isColonyRaius()) {
+				if (this.actualMode == Modes.BACKING_COLONY && deslocated.isColonyRadius()) {
+					arrowGot = Directions.values()[i];
 					f = deslocated;
 				}
 			}
 		}
-		
-		if(f != null) return f;
+
+		if (f != null)
+			return f.getObj() == null ? f : null;
 
 		if (this.getField().getArrow() != null) {
-			deslocated = this.actualMode == Modes.BACKING_COLONY
-					? this.getField().getDeslocatedField(this.getField().getArrow())
-					: this.getField().getDeslocatedField(Directions.getOposite(this.getField().getArrow()));
-			if (deslocated != null && (deslocated.getObj() == null || deslocated.getObj() instanceof AntColony)) {
-				return deslocated;
+			if (this.actualMode == Modes.BACKING_COLONY) {
+				deslocated = this.getField().getDeslocatedField(this.getField().getArrow());
+			} else {
+				List<Field> fields = this.getField().getThisPointers();
+				if (fields != null) {
+					deslocated = fields.get(r.nextInt(fields.size()));
+				}
+			}
+			if (deslocated != null) {
+				if (deslocated.getObj() == null
+						|| (deslocated.getObj() instanceof AntColony && this.actualMode == Modes.BACKING_COLONY)
+						|| (deslocated.getObj() instanceof AntColony && this.actualMode == Modes.BACKING_COLONY)) {
+					return deslocated;
+				}
 			}
 		}
 
-		Random r = new Random();
 		Directions d;
 		d = this.actualMode == Modes.SEARCHING_FOOD ? this.searchDir[r.nextInt(3)] : this.backDir[r.nextInt(3)];
 		int counter = 3;
@@ -112,6 +122,10 @@ public class Ant extends UniverseObject implements Alive {
 		return f;
 	}
 
+	public Modes getActualMode() {
+		return actualMode;
+	}
+
 	public void move(Field f, boolean isEarlyModeChange) {
 		if (hasMovedFlag)
 			return;
@@ -119,9 +133,8 @@ public class Ant extends UniverseObject implements Alive {
 		this.previousField = this.getField();
 		this.getField().setObj(null);
 		if (actualMode == Modes.BACKING_COLONY && this.getField().getArrow() == null) {
-			this.getField().setArrow(arrowGot);
+			this.getField().setPheromone(arrowGot, false);
 			arrowGot = null;
-//				this.getField().addPheromone(20);
 		}
 		this.setField(f);
 		f.setObj(this);

@@ -21,6 +21,8 @@ public class SimulationController {
 	private boolean isActive;
 	private int foodCounter;
 	private int worldFood = 0;
+	private int speed;
+	private int maximumAnts;
 
 	public int getWorldFood() {
 		return worldFood;
@@ -34,9 +36,21 @@ public class SimulationController {
 	public int getFoodCounter() {
 		return foodCounter;
 	}
+	
+	public int getAntCounter() {
+		int c = 0;
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix.length; j++) {
+				if(matrix[i][j].getObj() instanceof Ant) c++;
+			}
+		}
+		return c;
+	}
 
-	public SimulationController(int size, WorldLayouts layout, Window window){
+	public SimulationController(int size, WorldLayouts layout, Window window, int selectedSpeed, int maxAnts){
 		this.window = window;
+		this.speed = selectedSpeed;
+		this.maximumAnts =  maxAnts <= 0 ? -1 : maxAnts;
 		this.matrix = getFieldMatrix(size, layout);
 	}
 	
@@ -50,7 +64,7 @@ public class SimulationController {
 				transientFields.forEach(f -> f.transitate());
 				window.refreshFields();
 				try {
-					Thread.sleep(100);
+					Thread.sleep(this.speed);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -77,7 +91,7 @@ public class SimulationController {
 					aux = new Field(new Food(), this, i, j);
 					worldFood++;
 					break;
-				case 'G': aux = new Field(new AntColony(), this, i, j); break;
+				case 'G': aux = new Field(new AntColony(maximumAnts), this, i, j); break;
 				case '▢': aux = new Field(null, this, i, j); break;
 				}
 				fieldsSet.add(aux);
