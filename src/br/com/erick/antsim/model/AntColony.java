@@ -6,13 +6,15 @@ import br.com.erick.antsim.utilitaries.Directions;
 
 public class AntColony extends UniverseObject implements Alive{
 
+	private int lifeRange;
 	private boolean initializated = false;
 	private int ants;
 	private int coolDown = 0;
 	private int foodCount = 0;
 	
-	public AntColony(int maximumAnts) {
+	public AntColony(int maximumAnts, int lifeRange) {
 		this.ants = maximumAnts;
+		this.lifeRange = lifeRange;
 	}
 
 	public synchronized void addFood() {
@@ -29,7 +31,7 @@ public class AntColony extends UniverseObject implements Alive{
 		for(int i = 0; i < Directions.values().length; i++) {
 			Directions d = Directions.values()[i];
 			f = this.getField().getDeslocatedField(d);
-			f.setPheromone(d, true);
+			f.setPheromone(d, true, 1);
 		}
 	}
 
@@ -41,7 +43,7 @@ public class AntColony extends UniverseObject implements Alive{
 				Directions d = Directions.values()[r.nextInt(8)];
 				Field f = this.getField().getDeslocatedField(d);
 				if(f.getObj() != null) return;
-				f.setObj(new Ant(d));
+				f.setObj(new Ant(d, lifeRange));
 				coolDown = 20;
 				ants--;
 			}

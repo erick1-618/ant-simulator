@@ -7,6 +7,7 @@ import br.com.erick.antsim.utilitaries.Directions;
 
 public class Ant extends UniverseObject implements Alive {
 
+	private int lifeRange;
 	private boolean hasMovedFlag;
 	private Field previousField = null;
 
@@ -14,7 +15,8 @@ public class Ant extends UniverseObject implements Alive {
 		SEARCHING_FOOD, BACKING_COLONY
 	}
 
-	public Ant(Directions d) {
+	public Ant(Directions d, int lifeRange) {
+		this.lifeRange = lifeRange;
 		this.food = null;
 		this.actualMode = Modes.SEARCHING_FOOD;
 		this.searchDir = Directions.getArc(d);
@@ -133,7 +135,7 @@ public class Ant extends UniverseObject implements Alive {
 		this.previousField = this.getField();
 		this.getField().setObj(null);
 		if (actualMode == Modes.BACKING_COLONY && this.getField().getArrow() == null) {
-			this.getField().setPheromone(arrowGot, false);
+			this.getField().setPheromone(arrowGot, false, this.lifeRange);
 			arrowGot = null;
 		}
 		this.setField(f);

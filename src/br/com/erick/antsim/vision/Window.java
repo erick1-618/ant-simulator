@@ -60,11 +60,11 @@ public class Window extends JFrame{
             }
 
             switch(selectedWorld) {
-            case 'T': this.simController = new SimulationController(size, WorldLayouts.TWO_SQUARES, this, sSpeed, selectedNumber); break;
-            case 'U': this.simController = new SimulationController(size, WorldLayouts.UP_SQUARE, this, sSpeed, selectedNumber); break;
-            case 'D': this.simController = new SimulationController(size, WorldLayouts.DOWN_SQUARE, this, sSpeed, selectedNumber); break;
-            case 'F': this.simController = new SimulationController(size, WorldLayouts.FOUR_CORNERS, this, sSpeed, selectedNumber); break;
-            case 'R': this.simController = new SimulationController(size, WorldLayouts.RANDOM, this, sSpeed, selectedNumber); break;
+            case 'T': this.simController = new SimulationController(size, WorldLayouts.TWO_SQUARES, this, sSpeed, selectedNumber, 150); break;
+            case 'U': this.simController = new SimulationController(size, WorldLayouts.UP_SQUARE, this, sSpeed, selectedNumber, 150); break;
+            case 'D': this.simController = new SimulationController(size, WorldLayouts.DOWN_SQUARE, this, sSpeed, selectedNumber, 150); break;
+            case 'F': this.simController = new SimulationController(size, WorldLayouts.FOUR_CORNERS, this, sSpeed, selectedNumber, 150); break;
+            case 'R': this.simController = new SimulationController(size, WorldLayouts.RANDOM, this, sSpeed, selectedNumber, 150); break;
             }
             
             this.panel.setLayout(new GridLayout(size, size));
@@ -89,6 +89,11 @@ public class Window extends JFrame{
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             
             simController.startSimulation();
+            try {
+    		    System.out.println(simController.getTotalIterations());
+    		} catch (InterruptedException e) {
+    		    e.printStackTrace();
+    		}
         }
 	}
 	

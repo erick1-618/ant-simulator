@@ -4,7 +4,8 @@ import br.com.erick.antsim.model.Ant.Modes;
 import br.com.erick.antsim.utilitaries.Directions;
 
 public class Pheromone extends UniverseObject{
-	
+
+	private final int lifeRange;
 	private int life = 0;
 	private boolean isColonyRadius = false;
 	private boolean ps = false;
@@ -23,7 +24,7 @@ public class Pheromone extends UniverseObject{
 			pb = true;
 		}
 		if(pb && ps) {
-			life = 250;
+			life = lifeRange;
 			pb = false;
 			ps = false;
 		}
@@ -37,8 +38,9 @@ public class Pheromone extends UniverseObject{
 		return isColonyRadius;
 	}
 
-	public Pheromone(Directions arrow, boolean isColonyRadius) {
-		life = 400;
+	public Pheromone(Directions arrow, boolean isColonyRadius, int lifeRange) {
+		this.lifeRange = lifeRange;
+		life = lifeRange;
 		this.arrow = arrow;
 		this.isColonyRadius = isColonyRadius;
 	}

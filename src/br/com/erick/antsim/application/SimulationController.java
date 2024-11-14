@@ -23,18 +23,28 @@ public class SimulationController {
 	private int worldFood = 0;
 	private int speed;
 	private int maximumAnts;
+	private int lifeRange;
+	private long simIterations = 0;
 
+	public boolean isActive() {
+		return isActive;
+	}
+	
 	public int getWorldFood() {
 		return worldFood;
 	}
 
 	public void setFoodCounter(int foodCounter) {
 		this.foodCounter = foodCounter;
-		window.refreshLabel();
+		if(window != null) window.refreshLabel();
 	}
 
 	public int getFoodCounter() {
 		return foodCounter;
+	}
+	
+	public Thread getSimulationThread() {
+	    return exeSimulationThread;
 	}
 	
 	public int getAntCounter() {
@@ -47,7 +57,8 @@ public class SimulationController {
 		return c;
 	}
 
-	public SimulationController(int size, WorldLayouts layout, Window window, int selectedSpeed, int maxAnts){
+	public SimulationController(int size, WorldLayouts layout, Window window, int selectedSpeed, int maxAnts, int lifeRange){
+		this.lifeRange = lifeRange;
 		this.window = window;
 		this.speed = selectedSpeed;
 		this.maximumAnts =  maxAnts <= 0 ? -1 : maxAnts;
@@ -59,10 +70,11 @@ public class SimulationController {
 		exeSimulationThread = new Thread(() -> {
 				
 			while(true) {
+				simIterations++;
 				Set<Field> transientFields = fieldsSet.stream().filter(f -> f.isTransient()).collect(Collectors.toSet());
 				transientFields.forEach(f -> f.resetMovedFlag());
 				transientFields.forEach(f -> f.transitate());
-				window.refreshFields();
+				if(window != null) window.refreshFields();
 				try {
 					Thread.sleep(this.speed);
 				} catch (InterruptedException e) {
@@ -71,9 +83,15 @@ public class SimulationController {
 				if(this.foodCounter ==  worldFood) {
 					break;
 				}
-			}			
+			}
+			this.isActive = false;
 		});
 		exeSimulationThread.start();
+	}
+	
+	public long getTotalIterations() throws InterruptedException {
+		this.exeSimulationThread.join();
+		return this.simIterations;
 	}
 
 	public Field[][] getMatrix() {
@@ -91,7 +109,7 @@ public class SimulationController {
 					aux = new Field(new Food(), this, i, j);
 					worldFood++;
 					break;
-				case 'G': aux = new Field(new AntColony(maximumAnts), this, i, j); break;
+				case 'G': aux = new Field(new AntColony(maximumAnts, lifeRange), this, i, j); break;
 				case '▢': aux = new Field(null, this, i, j); break;
 				}
 				fieldsSet.add(aux);

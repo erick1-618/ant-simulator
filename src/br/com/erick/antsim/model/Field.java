@@ -17,9 +17,9 @@ public class Field {
 		return this.pheromone;
 	}
 	
-	public void setPheromone(Directions d, boolean cRadius) {
+	public void setPheromone(Directions d, boolean cRadius, int lifeRange) {
 		if(this.pheromone == null) {
-			this.pheromone = new Pheromone(d, cRadius);
+			this.pheromone = new Pheromone(d, cRadius, lifeRange);
 		}
 	}
 
