@@ -36,6 +36,7 @@ public class Ant extends UniverseObject implements Alive {
 		f = getBestField(this.actualMode);
 		if (f == null)
 			return;
+
 		if (f.getObj() instanceof AntColony) {
 			((AntColony) f.getObj()).addFood();
 			this.food = null;
@@ -45,6 +46,7 @@ public class Ant extends UniverseObject implements Alive {
 				this.actualMode = Modes.BACKING_COLONY;
 				earlyModeChange = true;
 				this.food = (Food) f.getObj();
+				this.getField().setPheromone(arrowGot, false, this.lifeRange);
 				f.setObj(null);
 			}
 			move(f, earlyModeChange);
@@ -61,13 +63,13 @@ public class Ant extends UniverseObject implements Alive {
 			deslocated = this.getField().getDeslocatedField(Directions.values()[i]);
 			if (deslocated != null) {
 				if (deslocated.getObj() instanceof Food && this.actualMode == Modes.SEARCHING_FOOD) {
+					arrowGot = Directions.values()[i];
 					return deslocated;
 				}
 				if (deslocated.getObj() instanceof AntColony && this.actualMode == Modes.BACKING_COLONY) {
 					return deslocated;
 				}
 				if (this.actualMode == Modes.BACKING_COLONY && deslocated.isColonyRadius()) {
-					arrowGot = Directions.values()[i];
 					f = deslocated;
 				}
 			}
@@ -77,7 +79,7 @@ public class Ant extends UniverseObject implements Alive {
 			return f.getObj() == null ? f : null;
 
 		if (this.getField().getArrow() != null) {
-			if (this.actualMode == Modes.BACKING_COLONY) {
+			if (this.actualMode == Modes.SEARCHING_FOOD) {
 				deslocated = this.getField().getDeslocatedField(this.getField().getArrow());
 			} else {
 				List<Field> fields = this.getField().getThisPointers();
@@ -88,7 +90,8 @@ public class Ant extends UniverseObject implements Alive {
 			if (deslocated != null) {
 				if (deslocated.getObj() == null
 						|| (deslocated.getObj() instanceof AntColony && this.actualMode == Modes.BACKING_COLONY)
-						|| (deslocated.getObj() instanceof AntColony && this.actualMode == Modes.BACKING_COLONY)) {
+						|| (deslocated.getObj() instanceof Food && this.actualMode == Modes.SEARCHING_FOOD)) {
+					arrowGot = this.getField().getArrow();
 					return deslocated;
 				}
 			}
@@ -118,7 +121,7 @@ public class Ant extends UniverseObject implements Alive {
 			d = this.actualMode == Modes.SEARCHING_FOOD ? this.searchDir[r.nextInt(3)] : this.backDir[r.nextInt(3)];
 			counter--;
 		}
-		if (f != null && actualMode == Modes.BACKING_COLONY) {
+		if (f != null && actualMode == Modes.SEARCHING_FOOD) {
 			arrowGot = d;
 		}
 		return f;
@@ -134,11 +137,13 @@ public class Ant extends UniverseObject implements Alive {
 		hasMovedFlag = true;
 		this.previousField = this.getField();
 		this.getField().setObj(null);
-		if (actualMode == Modes.BACKING_COLONY && this.getField().getArrow() == null) {
+		if ((actualMode == Modes.SEARCHING_FOOD || isEarlyModeChange) && this.getField().getArrow() == null) {
 			this.getField().setPheromone(arrowGot, false, this.lifeRange);
 			arrowGot = null;
 		}
 		this.setField(f);
+		if (isEarlyModeChange)
+			this.getField().setPheromone(arrowGot, false, this.lifeRange);
 		f.setObj(this);
 	}
 

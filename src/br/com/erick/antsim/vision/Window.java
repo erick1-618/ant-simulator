@@ -89,11 +89,6 @@ public class Window extends JFrame{
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             
             simController.startSimulation();
-            try {
-    		    System.out.println(simController.getTotalIterations());
-    		} catch (InterruptedException e) {
-    		    e.printStackTrace();
-    		}
         }
 	}
 	
