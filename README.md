@@ -2,6 +2,32 @@
 
 Simulador de colônia de formigas, implementado em Java, utilizando Swing para interface gráfica. O propósito do projeto é simular, por meio da orientação de objetos, o comportamento das formigas na busca por alimentos para a sua colônia.
 
+## Como utilizar
+
+Se você utilizar o JRE 21, basta executar .jar.
+Se estiver no Windows, basta clicar duas vezes.
+Se estiver no Linux:
+
+```
+java -jar AntSimulator.jar
+```
+
+Caso utilize outra versão do JRE, o projeto necessitará de ser recompilado.
+
+### Recompilando o projeto
+
+Na pasta do repositório, execute:
+
+```
+javac $(find . -name "*.java")
+```
+
+Pronto! Agora para executar o projeto:
+```
+cd src //certifique-se de estar na pasta src
+java br.com.erick.antsim.vision.Window
+```
+
 ## Como funciona
 
 Dada uma matriz de Fields, que são objetos que seguram UniverseObjects, que por sua vez são objetos que representam 
