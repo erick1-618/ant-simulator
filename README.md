@@ -32,8 +32,9 @@ java br.com.erick.antsim.vision.Window
 
 Dada uma matriz de Fields, que são objetos que seguram UniverseObjects, que por sua vez são objetos que representam 
 os participantes elementares da simulação (formiga, colônia e comida), a simulação começa com a colônia colocando formigas à procura de alimento.
-Ao encontrá-los inicia sua rota de volta para casa, deixando para trás um rastro de volta ao alimento, para, quando uma formiga entrar nesse rastro,
-dependo do seu objetivo, conseguir encontrar a colônia ou alimento. A simulação encerra quando todos os alimentos são coletados.
+Ao iniciar a sua busca, ela deixa um rastro para voltar para casa, assim, qualquer formiga que entrar no rastro, dependendo do seu objetivo, saberá voltar
+para colônia, ou encontrar alimento. Ao encontrar alimento, ela inicia sua rota de volta para casa, para reiniciar o ciclo até todos os alimentos serem levados 
+à colônia.
 
 ## Classes Principais
 
