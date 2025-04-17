@@ -2,6 +2,8 @@
 
 Simulador de colônia de formigas, implementado em Java, utilizando Swing para interface gráfica. O propósito do projeto é simular, por meio da orientação de objetos, o comportamento das formigas na busca por alimentos para a sua colônia.
 
+<img src="./assets/example.gif" width=400></img>
+
 ## Como funciona
 
 Dada uma matriz de Fields, que são objetos que seguram UniverseObjects, que por sua vez são objetos que representam 
